@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:client_maui.ViewModels"
+    x:Class="client_maui.Views.RegisterPage">
+
+   
+
+        <VerticalStackLayout Padding="20">
+        <Entry Placeholder="Email" Text="{Binding Email}" />
+        <Entry Placeholder="Phone" Text="{Binding Phone}" />
+        <Entry Placeholder="Password" IsPassword="True" Text="{Binding Password}" />
+        <Entry Placeholder="Name" Text="{Binding DisplayName}" />
+        <Button Text="Register" Command="{Binding RegisterCommand}" />
+        <Label Text="{Binding Status}" />
+    </VerticalStackLayout>
+</ContentPage>

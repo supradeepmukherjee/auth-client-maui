@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="client_maui.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:client_maui"
+    xmlns:views="clr-namespace:client_maui.Views"
+    Title="client_maui">
+
+    <ShellContent Route="login" ContentTemplate="{DataTemplate views:LoginPage}" />
+    <ShellContent Route="register" ContentTemplate="{DataTemplate views:RegisterPage}" />
+    <ShellContent Route="home" ContentTemplate="{DataTemplate views:HomePage}" />
+
+</Shell>
