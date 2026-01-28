@@ -56,7 +56,7 @@ namespace client_maui.ViewModels
             try
             {
                 var clientId = "289098979106-isvq84aed7dv4io6l83rgegranvausf3.apps.googleusercontent.com";
-                var redirectUri = $"com.companyname.clientmaui:/oauth2redirect";
+                var redirectUri = $"com.companyname.clientmaui://oauth2redirect";
                 var scope = "openid email profile";
                 var authUrl = $"https://accounts.google.com/o/oauth2/v2/auth?client_id={clientId}&redirect_uri={Uri.EscapeDataString(redirectUri)}&response_type=id_token%20token&scope={Uri.EscapeDataString(scope)}&nonce={Guid.NewGuid()}&prompt=select_account";
 
