@@ -2,6 +2,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:client_maui.ViewModels"
+    x:DataType="vm:HomeViewModel"
     x:Class="client_maui.Views.HomePage">
 
     <VerticalStackLayout Padding="20">

@@ -4,14 +4,16 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:client_maui.ViewModels"
+    x:DataType="vm:LoginViewModel"
+    xmlns:controls="clr-namespace:client_maui.Controls"
     Title="Login">
 
     <VerticalStackLayout Padding="20" Spacing="12">
-        <Entry Placeholder="Email or Phone" Text="{Binding Identifier}" />
-        <Entry Placeholder="Password" IsPassword="True" Text="{Binding Password}" />
-        <Button Text="Login" Command="{Binding LoginCommand}" />
-        <Button Text="Sign in with Google" Command="{Binding SsoGoogleCommand}" />
-        <Button Text="Register" Command="{Binding GoToRegisterCommand}"/>
+        <controls:FloatingLabelEntry Label="Email or Phone" Text="{Binding Identifier}" Placeholder=""/>
+        <controls:FloatingLabelEntry Label="Password" Text="{Binding Password}" Placeholder=""/>
+        <controls:RoundedBtn Text="Login" Command="{Binding LoginCommand}" BackgroundColor="#6B46C1" CornerRadius="12" />
+        <controls:RoundedBtn Text="Sign in with Google" Command="{Binding SsoGoogleCommand}" BackgroundColor="#5A37B7" Icon="google_icon.png" />
+        <controls:RoundedBtn Text="Register" Command="{Binding GoToRegisterCommand}" BackgroundColor="#8F6EF3" />
         <Label Text="{Binding Status}" />
     </VerticalStackLayout>
 </ContentPage>
