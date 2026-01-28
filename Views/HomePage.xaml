@@ -6,7 +6,50 @@
 
     <VerticalStackLayout Padding="20">
         <Label Text="Authenticated User Info" FontSize="18" />
-        <Label Text="{Binding Message}" />
+        <Label>
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Name: " FontAttributes="Bold"/>
+                    <Span Text="{Binding Name}" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+        <Label>
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Email: " FontAttributes="Bold"/>
+                    <Span Text="{Binding Email}" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+        <Label>
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Phone: " FontAttributes="Bold"/>
+                    <Span Text="{Binding Phone}" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+        <Label>
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Roles: " FontAttributes="Bold"/>
+                    <Span Text="{Binding Roles}" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
+
+        <Label>
+            <Label.FormattedText>
+                <FormattedString>
+                    <Span Text="Provider: " FontAttributes="Bold"/>
+                    <Span Text="{Binding Provider}" />
+                </FormattedString>
+            </Label.FormattedText>
+        </Label>
         <Button Text="Logout" Command="{Binding LogoutCommand}" />
     </VerticalStackLayout>
 </ContentPage>

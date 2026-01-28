@@ -10,6 +10,9 @@ namespace client_maui.Services
     {
         public async Task<bool> AuthenticateAsync()
         {
+            if (DeviceInfo.Platform != DevicePlatform.Android && DeviceInfo.Platform != DevicePlatform.iOS)
+                return false;
+
             var availability = await CrossFingerprint.Current.GetAvailabilityAsync();
 
             if (availability != FingerprintAvailability.Available)

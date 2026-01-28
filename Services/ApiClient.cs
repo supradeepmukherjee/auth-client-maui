@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Text;
 
@@ -61,6 +62,7 @@ namespace client_maui.Services
         public async Task<string?> GetMeAsync(string accessToken)
         {
             var req = new HttpRequestMessage(HttpMethod.Get, "/me");
+            Debug.WriteLine(req);
             req.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
             var res = await _http.SendAsync(req);
             if (!res.IsSuccessStatusCode) return null;

@@ -5,7 +5,7 @@ namespace client_maui
 {
     public partial class App : Application
     {
-        public App(AuthLocalService auth)
+        public App(AuthLocalService auth, BiometricService biometric)
         {
             InitializeComponent();
 

@@ -18,7 +18,7 @@ namespace client_maui.Services
             _local = local;
             _refreshClient = new HttpClient
             {
-                BaseAddress = new Uri("http://10.0.2.2:5166")
+                BaseAddress = new Uri("http://localhost:5166")
             };
         }
 

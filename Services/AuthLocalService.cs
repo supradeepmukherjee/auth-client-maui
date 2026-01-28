@@ -31,14 +31,14 @@ namespace client_maui.Services
 
         public async Task<(string? access, string? refresh)> GetTokenAsync(bool requireBiometric = false)
         {
-            if (requireBiometric)
-            {
-                var auth = await CrossFingerprint.Current.IsAvailableAsync(true);
-                if (!auth) throw new InvalidOperationException("Biometric/auth not available");
+            //if (requireBiometric)
+            //{
+            //    var auth = await CrossFingerprint.Current.IsAvailableAsync(true);
+            //    if (!auth) throw new InvalidOperationException("Biometric/auth not available");
 
-                var result = await CrossFingerprint.Current.AuthenticateAsync(new AuthenticationRequestConfiguration("Unlock", "Use biometric to unlock token"));
-                if (!result.Authenticated) return (null, null);
-            }
+            //    var result = await CrossFingerprint.Current.AuthenticateAsync(new AuthenticationRequestConfiguration("Unlock", "Use biometric to unlock token"));
+            //    if (!result.Authenticated) return (null, null);
+            //}
 
             var access = await SecureStorage.GetAsync(AccessKey);
             var refresh = await SecureStorage.GetAsync(RefreshKey);

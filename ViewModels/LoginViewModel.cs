@@ -10,13 +10,13 @@ namespace client_maui.ViewModels
     public partial class LoginViewModel:ObservableObject
     {
         private readonly ApiClient _apiClient;
-        //private readonly BiometricService _biometric;
+        private readonly BiometricService _biometric;
         private readonly AuthLocalService _auth;
 
-        public LoginViewModel(AuthLocalService auth, ApiClient apiClient)
+        public LoginViewModel(AuthLocalService auth, ApiClient apiClient, BiometricService biometric)
         {
             _apiClient = apiClient;
-            //_biometric = biometric;
+            _biometric = biometric;
             _auth= auth;
         }
 
@@ -41,6 +41,7 @@ namespace client_maui.ViewModels
             }
             await _auth.SaveTokensAsync(token.AccessToken, token.RefreshToken);
             Status = "Logged in";
+            await Shell.Current.GoToAsync("//home");
         }
 
         [RelayCommand]
@@ -91,15 +92,15 @@ namespace client_maui.ViewModels
             await Shell.Current.GoToAsync("//register");
         }
 
-        //[RelayCommand]
-        //async Task BiometricLoginAsync()
-        //{
-        //    var ok = await _biometric.AuthenticateAsync();
-        //    if (!ok) return;
+        [RelayCommand]
+        async Task BiometricLoginAsync()
+        {
+            var ok = await _biometric.AuthenticateAsync();
+            if (!ok) return;
 
-        //    var token = await _auth.GetTokenAsync();
-        //    if (token.access is not null)
-        //        await Shell.Current.GoToAsync("home");
-        //}
+            var token = await _auth.GetTokenAsync();
+            if (token.access is not null)
+                await Shell.Current.GoToAsync("home");
+        }
     }
 }

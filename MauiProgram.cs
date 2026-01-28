@@ -22,11 +22,11 @@ namespace client_maui
 
             builder.Services.AddHttpClient<ApiClient>(client =>
             {
-                client.BaseAddress = new Uri("http://10.0.2.2:5166");
+                client.BaseAddress = new Uri("http://localhost:5166");
             })
             .AddHttpMessageHandler<AuthHttpHandler>();
 
-            //builder.Services.AddSingleton<BiometricService>();
+            builder.Services.AddSingleton<BiometricService>();
             builder.Services.AddSingleton<AuthLocalService>();
 
             builder.Services.AddTransient<LoginViewModel>();

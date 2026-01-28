@@ -7,10 +7,18 @@ namespace client_maui.Views
 {
     public partial class HomePage:ContentPage
     {
+        private readonly HomeViewModel _vm;
+
         public HomePage(HomeViewModel vm)
         {
             InitializeComponent();
-            BindingContext=vm;
+            BindingContext = _vm = vm;
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await _vm.AuthenticateAndLoadAsync();
         }
     }
 }
