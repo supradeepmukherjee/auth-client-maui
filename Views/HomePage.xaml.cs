@@ -18,7 +18,7 @@ namespace client_maui.Views
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            await _vm.AuthenticateAndLoadAsync();
+            await _vm.LoadAsync();
         }
     }
 }

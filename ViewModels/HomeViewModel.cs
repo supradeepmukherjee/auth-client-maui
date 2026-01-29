@@ -31,7 +31,7 @@ namespace client_maui.ViewModels
         [RelayCommand]
         public async Task LoadAsync()
         {
-            var (access, _) = await _auth.GetTokenAsync(requireBiometric: true);
+            var (access, _) = await _auth.GetTokenAsync(requireBiometric: false);
             if (access == null)
             {
                 await Shell.Current.GoToAsync("//login");
@@ -40,7 +40,7 @@ namespace client_maui.ViewModels
 
             var json = await _apiClient.GetMeAsync(access);
             if (string.IsNullOrWhiteSpace(json)) return;
-
+            //Name = json;
             using var doc = JsonDocument.Parse(json);
             var root = doc.RootElement;
 
@@ -57,19 +57,15 @@ namespace client_maui.ViewModels
         [RelayCommand]
         public async Task AuthenticateAndLoadAsync()
         {
-            if (_hasUnlocked) return;
-
-            var ok = await _biometric.AuthenticateAsync();
-            if (!ok)
+            var (access, _) = await _auth.GetTokenAsync(requireBiometric: true);
+            if (string.IsNullOrEmpty(access))
             {
-                await Shell.Current.DisplayAlertAsync("Authentication required", "Biometric authentication failed or was cancelled.", "OK");
-                await _auth.ClearTokensAsync(); // trying
+                await _auth.ClearTokensAsync();
                 await Shell.Current.GoToAsync("//login");
                 return;
             }
 
-            _hasUnlocked = true;
-            await LoadAsync();
+            var json = await _apiClient.GetMeAsync(access);
         }
 
         [RelayCommand]

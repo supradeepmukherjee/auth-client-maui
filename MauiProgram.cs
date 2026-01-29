@@ -18,6 +18,11 @@ namespace client_maui
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            builder.Services.AddSingleton<AppShell>();
+
+            builder.Services.AddSingleton<BiometricService>();
+            builder.Services.AddSingleton<AuthLocalService>();
+
             builder.Services.AddTransient<AuthHttpHandler>();
 
             builder.Services.AddHttpClient<ApiClient>(client =>
@@ -26,8 +31,6 @@ namespace client_maui
             })
             .AddHttpMessageHandler<AuthHttpHandler>();
 
-            builder.Services.AddSingleton<BiometricService>();
-            builder.Services.AddSingleton<AuthLocalService>();
 
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<HomeViewModel>();
@@ -35,7 +38,6 @@ namespace client_maui
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<HomePage>();
             builder.Services.AddTransient<RegisterPage>();
-
 
 #if DEBUG
             builder.Logging.AddDebug();

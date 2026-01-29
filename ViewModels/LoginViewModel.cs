@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,6 +13,7 @@ namespace client_maui.ViewModels
         private readonly ApiClient _apiClient;
         private readonly BiometricService _biometric;
         private readonly AuthLocalService _auth;
+        private bool IsBusy;
 
         public LoginViewModel(AuthLocalService auth, ApiClient apiClient, BiometricService biometric)
         {
@@ -32,16 +34,33 @@ namespace client_maui.ViewModels
         [RelayCommand]
         public async Task LoginAsync()
         {
-            Status = "Logging in...";
-            var token = await _apiClient.LoginAsync(Identifier, Password);
-            if (token == null)
+            IsBusy = true;
+            try
             {
-                Status = "Login failed";
-                return;
+                var token = await _apiClient.LoginAsync(Identifier, Password);
+                if (token != null)
+                {
+                    await _auth.SaveTokensAsync(token.AccessToken, token.RefreshToken);
+
+                    Debug.WriteLine("TOKENS SAVED");
+
+                    Debug.WriteLine(await SecureStorage.GetAsync("auth_access_token"));
+                    Debug.WriteLine(await SecureStorage.GetAsync("auth_refresh_token"));
+
+                    await Shell.Current.GoToAsync("//home");
+                    return;
+                }
+
+                await Application.Current.MainPage.DisplayAlertAsync("Login failed", "Invalid credentials", "OK");
             }
-            await _auth.SaveTokensAsync(token.AccessToken, token.RefreshToken);
-            Status = "Logged in";
-            await Shell.Current.GoToAsync("//home");
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlertAsync("Error", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         [RelayCommand]
@@ -92,15 +111,15 @@ namespace client_maui.ViewModels
             await Shell.Current.GoToAsync("//register");
         }
 
-        [RelayCommand]
-        async Task BiometricLoginAsync()
-        {
-            var ok = await _biometric.AuthenticateAsync();
-            if (!ok) return;
+        //[RelayCommand]
+        //async Task BiometricLoginAsync()
+        //{
+        //    var ok = await _biometric.AuthenticateAsync();
+        //    if (!ok) return;
 
-            var token = await _auth.GetTokenAsync();
-            if (token.access is not null)
-                await Shell.Current.GoToAsync("home");
-        }
+        //    var token = await _auth.GetTokenAsync();
+        //    if (token.access is not null)
+        //        await Shell.Current.GoToAsync("home");
+        //}
     }
 }

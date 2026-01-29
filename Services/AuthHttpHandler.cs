@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http.Headers;
@@ -10,48 +11,62 @@ namespace client_maui.Services
     public class AuthHttpHandler:DelegatingHandler
     {
         private readonly AuthLocalService _local;
-        private readonly HttpClient _refreshClient;
-        
+        private readonly IHttpClientFactory _httpFactory;
+        private readonly ILogger<AuthHttpHandler> _logger;
 
-        public AuthHttpHandler(AuthLocalService local)
+        public AuthHttpHandler(AuthLocalService local, IHttpClientFactory httpFactory, ILogger<AuthHttpHandler> logger)
         {
             _local = local;
-            _refreshClient = new HttpClient
-            {
-                BaseAddress = new Uri("http://localhost:5166")
-            };
+            _httpFactory = httpFactory;
+            _logger = logger;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
         {
             var (access, refresh) = await _local.GetTokenAsync(requireBiometric: false);
-            if (!string.IsNullOrEmpty(access)) request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", access);
+            if (!string.IsNullOrEmpty(access))
+            {
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", access);
+            }
 
             var response = await base.SendAsync(request, ct);
 
-            if (response.StatusCode == HttpStatusCode.Unauthorized && refresh != null)
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
-                var refreshResponse = await _refreshClient.PostAsJsonAsync(
-                    "/refresh",
-                    new { RefreshToken = refresh },
-                    ct);
-
-                if (refreshResponse.IsSuccessStatusCode)
+                var refreshToken = refresh ?? await _local.GetRefreshTokenSilentlyAsync();
+                if (!string.IsNullOrEmpty(refreshToken))
                 {
-                    var newToken =
-                        await refreshResponse.Content.ReadFromJsonAsync<TokenResponse>(ct);
-
-                    if (newToken != null)
+                    try
                     {
-                        await _local.SaveTokensAsync(
-                            newToken.AccessToken,
-                            newToken.RefreshToken);
+                        var client = _httpFactory.CreateClient("noauth");
+                        var res = await client.PostAsJsonAsync("/refresh", new { RefreshToken = refreshToken }, ct);
+                        if (res.IsSuccessStatusCode)
+                        {
+                            var token = await res.Content.ReadFromJsonAsync<TokenResponse>(cancellationToken: ct);
+                            if (token != null)
+                            {
+                                await _local.SaveTokensAsync(token.AccessToken, token.RefreshToken);
+                                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
 
-                        request.Headers.Authorization =
-                            new AuthenticationHeaderValue("Bearer", newToken.AccessToken);
-
-                        response = await base.SendAsync(request, ct);
+                                response.Dispose();
+                                response = await base.SendAsync(request, ct);
+                                return response;
+                            }
+                        }
+                        else
+                        {
+                            await _local.ClearTokensAsync();
+                        }
                     }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Silent refresh failed");
+                        await _local.ClearTokensAsync();
+                    }
+                }
+                else
+                {
+                    await _local.ClearTokensAsync();
                 }
             }
 

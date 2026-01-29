@@ -8,55 +8,71 @@ namespace client_maui.Services
 {
     public class AuthLocalService
     {
-        private const string AccessKey = "access_token";
-        private const string RefreshKey = "refresh_token";
+        const string KEY_ACCESS = "auth_access_token";
+        const string KEY_REFRESH = "auth_refresh_token";
         private const string BiometricEnabledKey = "biometric_enabled";
+        private bool _isUnlocked = false;
+        private readonly BiometricService _biometric;
+
+        public AuthLocalService(BiometricService biometric)
+        {
+            _biometric = biometric;
+        }
 
         public async Task SaveTokensAsync(string accessToken, string refreshToken)
         {
-            await SecureStorage.SetAsync(AccessKey, accessToken);
-            await SecureStorage.SetAsync(RefreshKey, refreshToken);
-        }
 
-        public async Task<bool> HasTokensAsync()
-        {
-            try
-            {
-                var a = await SecureStorage.GetAsync(AccessKey);
-                var r = await SecureStorage.GetAsync(RefreshKey);
-                return !string.IsNullOrEmpty(a) && !string.IsNullOrEmpty(r);
-            }
-            catch { return false; }
-        }
+                await SecureStorage.SetAsync(KEY_ACCESS, accessToken ?? "");
+                await SecureStorage.SetAsync(KEY_REFRESH, refreshToken ?? "");
 
-        public async Task<(string? access, string? refresh)> GetTokenAsync(bool requireBiometric = false)
-        {
-            //if (requireBiometric)
-            //{
-            //    var auth = await CrossFingerprint.Current.IsAvailableAsync(true);
-            //    if (!auth) throw new InvalidOperationException("Biometric/auth not available");
-
-            //    var result = await CrossFingerprint.Current.AuthenticateAsync(new AuthenticationRequestConfiguration("Unlock", "Use biometric to unlock token"));
-            //    if (!result.Authenticated) return (null, null);
-            //}
-
-            var access = await SecureStorage.GetAsync(AccessKey);
-            var refresh = await SecureStorage.GetAsync(RefreshKey);
-            return (access, refresh);
+            _isUnlocked = true;
         }
 
         public async Task ClearTokensAsync()
         {
-             SecureStorage.Remove(AccessKey);
-             SecureStorage.Remove(RefreshKey);
+            try
+            {
+                SecureStorage.Remove(KEY_ACCESS);
+                SecureStorage.Remove(KEY_REFRESH);
+            }
+            catch { }
         }
 
-        public Task EnableBiometricAsync(bool enable)=>SecureStorage.SetAsync(BiometricEnabledKey, enable ? "1" : "0");
-
-        public async Task<bool> IsBiometricEnabledAsync()
+        public async Task<(string? AccessToken, string? RefreshToken)> GetTokenAsync(bool requireBiometric)
         {
-            var v = await SecureStorage.GetAsync(BiometricEnabledKey);
-            return v == "1";
+            var access = await SecureStorage.GetAsync(KEY_ACCESS);
+            var refresh = await SecureStorage.GetAsync(KEY_REFRESH);
+
+            if (string.IsNullOrEmpty(refresh))
+                return (null, null);
+
+            if (_isUnlocked && !string.IsNullOrEmpty(access))
+                return (access, refresh);
+
+            if (requireBiometric)
+            {
+                var ok = await _biometric.AuthenticateAsync();
+                if (!ok) return (null, null);
+
+                _isUnlocked = true;
+                return (access, refresh);
+            }
+
+            return (null, refresh);
+        }
+
+        public async Task<string?> GetRefreshTokenSilentlyAsync()
+        {
+            var refresh = await SecureStorage.GetAsync(KEY_REFRESH);
+
+            if (!string.IsNullOrEmpty(refresh)) return refresh;
+            return await SecureStorage.GetAsync(KEY_REFRESH);
+        }
+
+        public async Task<bool> HasStoredTokensAsync()
+        {
+            var r = await SecureStorage.GetAsync(KEY_REFRESH);
+            return !string.IsNullOrEmpty(r);
         }
     }
 }
