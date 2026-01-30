@@ -5,7 +5,7 @@
     x:DataType="vm:HomeViewModel"
     x:Class="client_maui.Views.HomePage">
 
-    <VerticalStackLayout Padding="20">
+    <VerticalStackLayout Padding="20" Spacing="15">
         <Label Text="Authenticated User Info" FontSize="18" />
         <Label>
             <Label.FormattedText>

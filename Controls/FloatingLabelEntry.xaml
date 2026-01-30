@@ -5,17 +5,29 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
   x:Name="root">
 
-    <Grid>
-        <Label x:Name="FloatingLabel"
-           Text="{Binding Label, Source={x:Reference root}}"
-           Opacity="0.6"
-           TranslationY="18"
-           FontSize="12" />
-        <Entry x:Name="InnerEntry"
-           Text="{Binding Text, Source={x:Reference root}, Mode=TwoWay}"
-           Placeholder="{Binding Placeholder, Source={x:Reference root}}"
-           VerticalOptions="Start"
-           Focused="Entry_Focused"
-           Unfocused="Entry_Unfocused" />
-    </Grid>
+    <Border
+        Stroke="{StaticResource BorderSubtle}"
+        StrokeThickness="1"
+        BackgroundColor="{StaticResource BgSurface}"
+        StrokeShape="RoundRectangle 12"
+        Padding="12,18,12,6">
+
+        <Grid>
+            <Label x:Name="FloatingLabel"
+                   Text="{Binding Label, Source={x:Reference root}}"
+                   FontSize="12"
+                   TextColor="{StaticResource TextSecondary}"
+                   TranslationY="0"/>
+
+            <Entry x:Name="InnerEntry"
+                   Text="{Binding Text, Source={x:Reference root}}"
+                   TextColor="{StaticResource TextPrimary}"
+                   BackgroundColor="Transparent"
+                   FontSize="15"
+                   CursorPosition="0"
+                   Margin="0,14,0,0"
+                   Focused="Entry_Focused"
+                   Unfocused="Entry_Unfocused"/>
+        </Grid>
+    </Border>
 </ContentView>

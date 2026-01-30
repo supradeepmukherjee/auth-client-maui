@@ -30,13 +30,13 @@ namespace client_maui.Controls
 
         async Task AnimateLabelUp()
         {
-            await FloatingLabel.TranslateToAsync(0, -18, 120, Easing.CubicOut);
+            await FloatingLabel.TranslateToAsync(0, -14, 120, Easing.CubicOut);
             FloatingLabel.FontSize = 10;
         }
 
         async Task AnimateLabelDown()
         {
-            await FloatingLabel.TranslateToAsync(0, 18, 120, Easing.CubicIn);
+            await FloatingLabel.TranslateToAsync(0, 0, 120, Easing.CubicIn);
             FloatingLabel.FontSize = 12;
         }
 

@@ -6,28 +6,45 @@
   x:Name="root"
   Padding="0">
 
-    <Frame
-    HasShadow="False"
-    Padding="0"
-    CornerRadius="{Binding CornerRadius, Source={x:Reference root}}"
-    BackgroundColor="{Binding BackgroundColor, Source={x:Reference root}}">
-        <Grid Padding="10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+    <Border
+        StrokeShape="RoundRectangle 14"
+        BackgroundColor="{Binding BackgroundColor,  Source={x:Reference root}}">
 
-            <Image Source="{Binding Icon, Source={x:Reference root}}" 
-             HeightRequest="30" WidthRequest="30" VerticalOptions="Center"
-             IsVisible="{Binding Icon, Source={x:Reference root}, Converter={StaticResource NullToBoolConverter}}" />
+        <Grid
+            Padding="16,12"
+            ColumnDefinitions="Auto,*"
+            VerticalOptions="Center">
 
-            <Button Grid.Column="1"
-              Text="{Binding Text, Source={x:Reference root}}"
-              Command="{Binding Command, Source={x:Reference root}}"
-              BackgroundColor="Transparent"
-              TextColor="{Binding TextColor, Source={x:Reference root}}"
-              FontAttributes="Bold"
-              HorizontalOptions="Fill" />
+            <Border
+                StrokeShape="Ellipse"
+                HeightRequest="28"
+                WidthRequest="28"
+                BackgroundColor="{StaticResource BgSurface}"
+                IsVisible="{Binding Icon,
+                 Source={x:Reference root},
+                Converter={StaticResource NullToBoolConverter}}">
+
+                <Image
+                    Source="{Binding Icon, Source={x:Reference root}}"
+                    Aspect="Fill"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"/>
+            </Border>
+
+            <Label
+                Grid.Column="1"
+                Text="{Binding Text, Source={x:Reference root}}"
+                TextColor="{Binding TextColor, Source={x:Reference root}}"
+                FontSize="15"
+                FontAttributes="Bold"
+                HorizontalOptions="CenterAndExpand"
+                VerticalOptions="Center"/>
+
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer
+                    Command="{Binding Command, Source={x:Reference root}}" />
+            </Grid.GestureRecognizers>
+
         </Grid>
-    </Frame>
+    </Border>
 </ContentView>
